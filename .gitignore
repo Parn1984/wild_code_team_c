@@ -1,0 +1,9 @@
+# exclude everything
+/0_start/data/*
+/0_start/generated_faces/*
+/0_start/saved_models/*
+
+# exception to the rule
+!/0_start/data/.gitkeep
+!/0_start/generated_faces/.gitkeep
+!/0_start/saved_models/.gitkeep
