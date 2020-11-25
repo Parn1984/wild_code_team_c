@@ -79,7 +79,7 @@ assert(rows * columns == batch_size)
 # Functions
 # =============================================================================
 
-# A compendium of available functions in gan_functions 
+# A compendium of available functions in gan_func
 
 # get_random_noise(rows, columns, random_noise_dimensions)
 

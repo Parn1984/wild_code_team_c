@@ -80,6 +80,7 @@ def get_training_data(datafolder, image_width, image_height, channels):
     training_data = []
     # Finds all files in datafolder
     filenames = os.listdir(datafolder)
+    filenames.remove('.gitkeep')
     for filename in tqdm(filenames):
         # Combines folder name and file name.
         path = os.path.join(datafolder, filename)

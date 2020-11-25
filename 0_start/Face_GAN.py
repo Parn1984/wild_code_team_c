@@ -35,6 +35,7 @@ import os
 
 # Custom functions
 import gan_functions
+import gan_func
 
 # =============================================================================
 # Paths and Variables
@@ -78,7 +79,7 @@ assert (rows * columns == batch_size)
 # Functions
 # =============================================================================
 
-# A compendium of available functions in gan_functions 
+# A compendium of available functions in gan_func
 
 # get_random_noise(rows, columns, random_noise_dimensions)
 
@@ -91,10 +92,10 @@ assert (rows * columns == batch_size)
 # =============================================================================
 
 # Get the real images
-training_data = gan_functions.get_training_data(imgs_dir,
-                                                image_width,
-                                                image_height,
-                                                channels)
+training_data = gan_func.get_training_data(imgs_dir,
+                                           image_width,
+                                           image_height,
+                                           channels)
 
 # Map all values to a range between -1 and 1.
 training_data = training_data / 127.5 - 1.
@@ -116,8 +117,8 @@ if use_pretrained_model:
     generator = load_model(pretrained_model_path_generator)
     discriminator = load_model(pretrained_model_path_discriminator)
 else:
-    generator = gan_functions.build_generator(random_noise_dimension, channels)
-    discriminator = gan_functions.build_discriminator(image_shape)
+    generator = gan_func.build_generator(random_noise_dimension, channels)
+    discriminator = gan_func.build_discriminator(image_shape)
 
 discriminator.compile(loss="binary_crossentropy",
                       optimizer=optimizer,
@@ -143,9 +144,7 @@ for epoch in range(epochs):
     real_images = training_data[indices]
 
     # Generate random noise for a whole batch.
-    random_noise = gan_functions.get_random_noise(rows,
-                                                  columns,
-                                                  random_noise_dimension)
+    random_noise = gan_func.get_random_noise(rows, columns, random_noise_dimension)
 
     discriminator.trainable = True
 
@@ -153,16 +152,11 @@ for epoch in range(epochs):
     generated_images = generator.predict(random_noise)
 
     # Train the discriminator on real images.
-    discriminator_loss_real = \
-        discriminator.train_on_batch(real_images,
-                                     labels_for_real_images)
+    discriminator_loss_real = discriminator.train_on_batch(real_images, labels_for_real_images)
     # Train the discriminator on generated images.
-    discriminator_loss_generated = \
-        discriminator.train_on_batch(generated_images,
-                                     labels_for_generated_images)
+    discriminator_loss_generated = discriminator.train_on_batch(generated_images, labels_for_generated_images)
     # Calculate the average discriminator loss.
-    discriminator_loss = 0.5 * np.add(discriminator_loss_real,
-                                      discriminator_loss_generated)
+    discriminator_loss = 0.5 * np.add(discriminator_loss_real, discriminator_loss_generated)
 
     # Train the generator using the combined model. Generator tries to trick 
     # discriminator into mistaking generated images as real.
@@ -178,8 +172,12 @@ for epoch in range(epochs):
           (epoch, discriminator_loss[0], 100 * discriminator_loss[1], generator_loss))
 
     if epoch % save_images_interval == 0:
-        gan_functions.save_images(epoch, random_noise_dimension, generator,
-                                  target_dir, target_fn, start_epoch)
+        gan_func.save_images(epoch,
+                             random_noise_dimension,
+                             generator,
+                             target_dir,
+                             target_fn,
+                             start_epoch)
 
     # Save the model for a later use
     generator.save(pretrained_model_path_generator)
