@@ -14,27 +14,19 @@ Inspired and altered from:
 # =============================================================================
 
 # Model functions from keras
-from keras.layers import Input, Reshape, Dropout, Dense, Flatten, \
-    BatchNormalization, Activation, ZeroPadding2D
-from keras.layers.advanced_activations import LeakyReLU
-from keras.layers.convolutional import UpSampling2D, Conv2D
-from keras.models import Sequential, Model, load_model
+from keras.layers import Input
+from keras.models import Model, load_model
 from keras.optimizers import Adam
 
-# matplotlib will help with displaying the results
-import matplotlib.pyplot as plt
 # numpy for some mathematical operations
 import numpy as np
-# PIL for opening,resizing and saving images
-from PIL import Image
-# tqdm for a progress bar when loading the dataset
-from tqdm import tqdm
-
-# os library is needed for extracting filenames from the dataset folder.
-import os
 
 # Custom functions
-import utils.gan_func
+from utils.gan_func import build_discriminator
+from utils.gan_func import build_generator
+from utils.gan_func import get_random_noise
+from utils.gan_func import get_training_data
+from utils.gan_func import save_images
 
 # =============================================================================
 # Paths and Variables
@@ -91,10 +83,7 @@ assert (rows * columns == batch_size)
 # =============================================================================
 
 # Get the real images
-training_data = gan_func.get_training_data(imgs_dir,
-                                           image_width,
-                                           image_height,
-                                           channels)
+training_data = get_training_data.get_training_data(imgs_dir, image_width, image_height, channels)
 
 # Map all values to a range between -1 and 1.
 training_data = training_data / 127.5 - 1.
@@ -116,8 +105,8 @@ if use_pretrained_model:
     generator = load_model(pretrained_model_path_generator)
     discriminator = load_model(pretrained_model_path_discriminator)
 else:
-    generator = gan_func.build_generator(random_noise_dimension, channels)
-    discriminator = gan_func.build_discriminator(image_shape)
+    generator = build_generator.build_generator(random_noise_dimension, channels)
+    discriminator = build_discriminator.build_discriminator(image_shape)
 
 discriminator.compile(loss="binary_crossentropy",
                       optimizer=optimizer,
@@ -143,7 +132,7 @@ for epoch in range(epochs):
     real_images = training_data[indices]
 
     # Generate random noise for a whole batch.
-    random_noise = gan_func.get_random_noise(rows, columns, random_noise_dimension)
+    random_noise = get_random_noise.get_random_noise(rows, columns, random_noise_dimension)
 
     discriminator.trainable = True
 
@@ -170,12 +159,7 @@ for epoch in range(epochs):
           (epoch, discriminator_loss[0], 100 * discriminator_loss[1], generator_loss))
 
     if epoch % save_images_interval == 0:
-        gan_func.save_images(epoch,
-                             random_noise_dimension,
-                             generator,
-                             target_dir,
-                             target_fn,
-                             start_epoch)
+        save_images.save_images(epoch, random_noise_dimension, generator, target_dir, target_fn, start_epoch)
 
     # Save the model for a later use
     generator.save(pretrained_model_path_generator)
