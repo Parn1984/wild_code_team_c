@@ -34,8 +34,7 @@ from tqdm import tqdm
 import os
 
 # Custom functions
-import gan_functions
-import gan_func
+import utils.gan_func
 
 # =============================================================================
 # Paths and Variables
@@ -163,8 +162,7 @@ for epoch in range(epochs):
     discriminator.trainable = False
 
     labels_for_tricking_discriminator = np.ones((batch_size, 1))
-    generator_loss = \
-        combined_model.train_on_batch(random_noise, labels_for_tricking_discriminator)
+    generator_loss = combined_model.train_on_batch(random_noise, labels_for_tricking_discriminator)
 
     # Training ends above (one iteration) 
     # This is only for display and saving models

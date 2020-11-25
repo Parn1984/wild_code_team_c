@@ -5,6 +5,16 @@ from keras.models import Sequential, Model
 
 
 def build_discriminator(image_shape):
+    '''
+
+    Parameters
+    ----------
+    image_shape
+
+    Returns
+    -------
+
+    '''
     # Discriminator attempts to classify real and generated images
     model = Sequential()
 
