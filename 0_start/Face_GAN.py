@@ -29,6 +29,18 @@ from utils.gan_func import get_training_data
 from utils.gan_func import save_images
 
 # =============================================================================
+# To avoid GPU memory issues
+# =============================================================================
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
+
+
+# =============================================================================
 # Paths and Variables
 # =============================================================================
 
