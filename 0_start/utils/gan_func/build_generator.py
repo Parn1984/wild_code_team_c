@@ -3,7 +3,7 @@ from keras.layers.convolutional import UpSampling2D, Conv2D
 from keras.models import Sequential, Model
 
 
-def build_generator(random_noise_dimension, channels, alpha=0.0, mean=1.0):
+def build_generator(random_noise_dimension, channels, alpha=0.0, momentum=1.0):
     '''
     Parameters
     ----------
@@ -34,7 +34,7 @@ def build_generator(random_noise_dimension, channels, alpha=0.0, mean=1.0):
 
     model.add(UpSampling2D())
     model.add(Conv2D(256, kernel_size=3, padding="same"))
-    model.add(BatchNormalization(momentum=mean))
+    model.add(BatchNormalization(momentum=momentum))
     if alpha == 0.0:
         model.add(Activation('relu'))
     else:
@@ -42,7 +42,7 @@ def build_generator(random_noise_dimension, channels, alpha=0.0, mean=1.0):
 
     model.add(UpSampling2D())
     model.add(Conv2D(256, kernel_size=3, padding="same"))
-    model.add(BatchNormalization(momentum=mean))
+    model.add(BatchNormalization(momentum=momentum))
     if alpha == 0.0:
         model.add(Activation('relu'))
     else:
@@ -50,7 +50,7 @@ def build_generator(random_noise_dimension, channels, alpha=0.0, mean=1.0):
 
     model.add(UpSampling2D())
     model.add(Conv2D(128, kernel_size=3, padding="same"))
-    model.add(BatchNormalization(momentum=mean))
+    model.add(BatchNormalization(momentum=momentum))
     if alpha == 0.0:
         model.add(Activation('relu'))
     else:
@@ -58,7 +58,7 @@ def build_generator(random_noise_dimension, channels, alpha=0.0, mean=1.0):
 
     model.add(UpSampling2D())
     model.add(Conv2D(128, kernel_size=3, padding="same"))
-    model.add(BatchNormalization(momentum=mean))
+    model.add(BatchNormalization(momentum=momentum))
     if alpha == 0.0:
         model.add(Activation('relu'))
     else:

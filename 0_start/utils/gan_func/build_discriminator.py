@@ -4,7 +4,7 @@ from keras.layers.convolutional import Conv2D
 from keras.models import Sequential, Model
 
 
-def build_discriminator(image_shape, alpha=0.2, dropout=0.25, mean=0.8):
+def build_discriminator(image_shape, alpha=0.2, dropout=0.25, momentum=0.8):
     '''
 
     Parameters
@@ -12,7 +12,7 @@ def build_discriminator(image_shape, alpha=0.2, dropout=0.25, mean=0.8):
     image_shape
     alpha: leaky relu alpha
     dropout: dropout for overfitting prevention
-    mean: for batch nomrmalization
+    momentum: for batch nomrmalization
 
     Returns
     -------
@@ -41,22 +41,22 @@ def build_discriminator(image_shape, alpha=0.2, dropout=0.25, mean=0.8):
     # Zero padding adds additional rows and columns to the image.
     # Those rows and columns are made of zeros.
     model.add(ZeroPadding2D(padding=((0, 1), (0, 1))))
-    model.add(BatchNormalization(momentum=mean))
+    model.add(BatchNormalization(momentum=momentum))
     model.add(LeakyReLU(alpha=alpha))
 
     model.add(Dropout(dropout))
     model.add(Conv2D(128, kernel_size=3, strides=2, padding="same"))
-    model.add(BatchNormalization(momentum=mean))
+    model.add(BatchNormalization(momentum=momentum))
     model.add(LeakyReLU(alpha=alpha))
 
     model.add(Dropout(dropout))
     model.add(Conv2D(256, kernel_size=3, strides=1, padding="same"))
-    model.add(BatchNormalization(momentum=mean))
+    model.add(BatchNormalization(momentum=momentum))
     model.add(LeakyReLU(alpha=alpha))
 
     model.add(Dropout(dropout))
     model.add(Conv2D(512, kernel_size=3, strides=1, padding="same"))
-    model.add(BatchNormalization(momentum=mean))
+    model.add(BatchNormalization(momentum=momentum))
     model.add(LeakyReLU(alpha=alpha))
 
     model.add(Dropout(dropout))
