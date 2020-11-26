@@ -15,9 +15,8 @@ def save_images(epoch, random_noise_dimension, generator, target_dir,
     image_count = 0
     for row in range(rows):
         for column in range(columns):
-            axis[row, column].imshow(generated_images[image_count, :],
-                                     cmap='spring')
+            axis[row, column].imshow(generated_images[image_count, :] ) #, cmap='spring')
             axis[row, column].axis('off')
             image_count += 1
-    figure.savefig(target_dir + target_fn + "_%d.png" % (start_epoch + epoch))
+    figure.savefig(target_dir + target_fn + "_%4d.png" % (start_epoch + epoch))
     plt.close()

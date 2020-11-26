@@ -3,13 +3,13 @@ from keras.layers.convolutional import UpSampling2D, Conv2D
 from keras.models import Sequential, Model
 
 
-def build_generator(random_noise_dimension, channels, activator=0):
+def build_generator(random_noise_dimension, channels, alpha=0.0, mean=1.0):
     '''
     Parameters
     ----------
     random_noise_dimension
     channels
-    activator: expects integer (0 is default value: 'relu) else: LeakyReLU(alpha=0.2)
+    alpha: expects float (0.0 is default value: 'relu) else: LeakyReLU(alpha)
 
     Returns
     -------
@@ -34,48 +34,45 @@ def build_generator(random_noise_dimension, channels, activator=0):
 
     model.add(UpSampling2D())
     model.add(Conv2D(256, kernel_size=3, padding="same"))
-    model.add(BatchNormalization(momentum=0.8))
-    if activator == 0:
+    model.add(BatchNormalization(momentum=mean))
+    if alpha == 0.0:
         model.add(Activation('relu'))
     else:
-        model.add(LeakyReLU(alpha=0.2))
+        model.add(LeakyReLU(alpha=alpha))
 
     model.add(UpSampling2D())
     model.add(Conv2D(256, kernel_size=3, padding="same"))
-    model.add(BatchNormalization(momentum=0.8))
-    if activator == 0:
+    model.add(BatchNormalization(momentum=mean))
+    if alpha == 0.0:
         model.add(Activation('relu'))
     else:
-        model.add(LeakyReLU(alpha=0.2))
+        model.add(LeakyReLU(alpha=alpha))
 
     model.add(UpSampling2D())
     model.add(Conv2D(128, kernel_size=3, padding="same"))
-    model.add(BatchNormalization(momentum=0.8))
-    if activator == 0:
+    model.add(BatchNormalization(momentum=mean))
+    if alpha == 0.0:
         model.add(Activation('relu'))
     else:
-        model.add(LeakyReLU(alpha=0.2))
+        model.add(LeakyReLU(alpha=alpha))
 
     model.add(UpSampling2D())
     model.add(Conv2D(128, kernel_size=3, padding="same"))
-    model.add(BatchNormalization(momentum=0.8))
-    if activator == 0:
+    model.add(BatchNormalization(momentum=mean))
+    if alpha == 0.0:
         model.add(Activation('relu'))
     else:
-        model.add(LeakyReLU(alpha=0.2))
+        model.add(LeakyReLU(alpha=alpha))
 
     # Last convolutional layer outputs as many featuremaps as channels
     # in the final image.
     model.add(Conv2D(channels, kernel_size=3, padding="same"))
     # model.add(Conv2D(channels, kernel_size=1, padding="same"))
     # tanh maps everything to a range between -1 and 1.
-    if activator == 0:
-        model.add(Activation('relu'))
-    else:
-        model.add(LeakyReLU(alpha=0.2))
+    model.add(Activation("tanh"))
 
     # show the summary of the model architecture
-    model.summary()
+    #model.summary()
 
     # Placeholder for the random noise input
     my_input = Input(shape=(random_noise_dimension,))

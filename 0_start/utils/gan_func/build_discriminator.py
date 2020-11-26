@@ -4,12 +4,15 @@ from keras.layers.convolutional import Conv2D
 from keras.models import Sequential, Model
 
 
-def build_discriminator(image_shape):
+def build_discriminator(image_shape, alpha=0.2, dropout=0.25, mean=0.8):
     '''
 
     Parameters
     ----------
     image_shape
+    alpha: leaky relu alpha
+    dropout: dropout for overfitting prevention
+    mean: for batch nomrmalization
 
     Returns
     -------
@@ -25,12 +28,12 @@ def build_discriminator(image_shape):
                      padding="same"))
     # Leaky relu is similar to usual relu. If x < 0 then f(x) = x * alpha,
     # otherwise f(x) = x.
-    model.add(LeakyReLU(alpha=0.2))
+    model.add(LeakyReLU(alpha=alpha))
 
     # Dropout blocks some connections randomly. This help the model
     # to generalize better. 0.25 means that every connection has a 25%
     # chance of being blocked.
-    model.add(Dropout(0.25))
+    model.add(Dropout(dropout))
     model.add(Conv2D(64,
                      kernel_size=3,
                      strides=2,
@@ -38,33 +41,31 @@ def build_discriminator(image_shape):
     # Zero padding adds additional rows and columns to the image.
     # Those rows and columns are made of zeros.
     model.add(ZeroPadding2D(padding=((0, 1), (0, 1))))
-    model.add(BatchNormalization(momentum=0.8))
-    model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization(momentum=mean))
+    model.add(LeakyReLU(alpha=alpha))
 
-    model.add(Dropout(0.25))
+    model.add(Dropout(dropout))
     model.add(Conv2D(128, kernel_size=3, strides=2, padding="same"))
-    model.add(BatchNormalization(momentum=0.8))
-    model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization(momentum=mean))
+    model.add(LeakyReLU(alpha=alpha))
 
-    model.add(Dropout(0.25))
+    model.add(Dropout(dropout))
     model.add(Conv2D(256, kernel_size=3, strides=1, padding="same"))
-    model.add(BatchNormalization(momentum=0.8))
-    model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization(momentum=mean))
+    model.add(LeakyReLU(alpha=alpha))
 
-    model.add(Dropout(0.25))
+    model.add(Dropout(dropout))
     model.add(Conv2D(512, kernel_size=3, strides=1, padding="same"))
-    model.add(BatchNormalization(momentum=0.8))
-    model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization(momentum=mean))
+    model.add(LeakyReLU(alpha=alpha))
 
-    model.add(Dropout(0.25))
-    # Flatten layer flattens the output of the previous layer to a single
-    # dimension.
+    model.add(Dropout(dropout))
+    # Flatten layer flattens the output of the previous layer to a single dimension.
     model.add(Flatten())
-    # Outputs a value between 0 and 1 that predicts whether image is
-    # real or generated. 0 = generated, 1 = real.
+    # Outputs a value between 0 and 1 that predicts whether image is real or generated. 0 = generated, 1 = real.
     model.add(Dense(1, activation='sigmoid'))
 
-    model.summary()
+    #model.summary()
 
     input_image = Input(image_shape)
 
